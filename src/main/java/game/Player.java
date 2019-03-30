@@ -8,6 +8,8 @@ import nl.han.ica.oopg.collision.ICollidableWithTiles;
 import nl.han.ica.oopg.exceptions.TileNotFoundException;
 import nl.han.ica.oopg.objects.Sprite;
 import nl.han.ica.oopg.objects.SpriteObject;
+import processing.core.PGraphics;
+import processing.core.PImage;
 import processing.core.PVector;
 import tiles.BackgroundTile;
 import tiles.WallTile;
@@ -17,14 +19,21 @@ public class Player extends SpriteObject implements ICollidableWithTiles {
 	private int speed = 0;
 	private boolean grounded, isHolding, isJumping, leftIsDown, rightIsDown;
 	private int jumpTime = 25;
+	PImage playerSprite;
 	private float speedMult = 0.05f, yPos = -1;
 
 	public Player(Game world) {
 
 		super(new Sprite(Game.MEDIA_URL.concat("player.png")));
+		playerSprite = world.loadImage(Game.MEDIA_URL.concat("player.png"));
 		setGravity(1);
 		setFriction(0.1f);
 		this.world = world;
+	}
+	
+	public void draw(PGraphics g)
+	{
+		g.image(playerSprite, x, y);
 	}
 
 	@Override
@@ -78,12 +87,12 @@ public class Player extends SpriteObject implements ICollidableWithTiles {
 	public void tileCollisionOccurred(List<CollidedTile> collidedTiles) {
 
 		grounded = false;
-		System.out.println("START");
 
 		PVector vector;
 		for (CollidedTile ct : collidedTiles) {
+			System.out.println(ct.getTile());
 			if (ct.getTile() instanceof WallTile) {
-
+				
 				try {
 					vector = world.getTileMap().getTilePixelLocation(ct.getTile());
 					if (ct.getCollisionSide() == CollisionSide.TOP) {
@@ -92,7 +101,6 @@ public class Player extends SpriteObject implements ICollidableWithTiles {
 							setySpeed(0);
 							grounded = true;
 							isJumping = false;
-							System.out.println("TOP");
 						}
 					}
 					if (ct.getCollisionSide() == CollisionSide.RIGHT) {
@@ -100,7 +108,6 @@ public class Player extends SpriteObject implements ICollidableWithTiles {
 								&& getY() + getHeight() > vector.y) {
 							setxSpeed(0);
 							setX(vector.x + getWidth());
-							System.out.println("RIGHT");
 						}
 
 					}
@@ -109,23 +116,23 @@ public class Player extends SpriteObject implements ICollidableWithTiles {
 								&& getY() + getHeight() > vector.y) {
 							setxSpeed(0);
 							setX(vector.x - getWidth());
-							System.out.println("LEFT");
 						}
 					}
 					if (ct.getCollisionSide() == CollisionSide.BOTTOM) {
 						if (getX() + getWidth() > vector.x && getX() < vector.x + ct.getTile().getSprite().getWidth()) {
 							setY(vector.y + getHeight());
 							setySpeed(0);
-							System.out.println("BOTTOM");
 						}
 					}
 				} catch (TileNotFoundException e) {
 					e.printStackTrace();
 				}
+
 				if (ct.getTile() instanceof BackgroundTile) {
-//					if (ct.getCollisionSide() == CollisionSide.INSIDE) {
-//						this.setSprite();
-//					}
+					
+					if (ct.getCollisionSide() == CollisionSide.INSIDE) {
+						playerSprite = world.loadImage(Game.MEDIA_URL.concat("player2.png"));
+					}
 				}
 
 			}

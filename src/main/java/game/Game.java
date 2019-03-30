@@ -25,8 +25,7 @@ public class Game extends GameEngine {
 		int worldHeight = 1024;
 
 		player = new Player(this);
-		addGameObject(player, 200, 100);
-
+		addGameObject(player, 200, 50);
 		View view = new View(worldWidth, worldHeight);
 
 		setView(view);
