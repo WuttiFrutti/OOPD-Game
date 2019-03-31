@@ -1,19 +1,23 @@
 package buttons;
 
 import game.Game;
-import nl.han.ica.oopg.objects.Sprite;
 
-public class startButton extends Button{
+public class startButton extends Button {
 	private Game game;
+
+	public startButton(Game game, String text, int fontSize) {
+		super(text, fontSize);
+		this.game = game;
+	}
 	
-	public startButton( Game game, Sprite sprite) {
-		super(sprite);
+	public startButton(Game game, String text, int fontSize, int xSize, int ySize) {
+		super(text, fontSize, xSize, ySize);
 		this.game = game;
 	}
 
 	@Override
 	public void clickedButton() {
-		game.startGame();
+		game.levelSelector();
 	}
-
+	
 }

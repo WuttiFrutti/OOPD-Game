@@ -30,9 +30,8 @@ public class Player extends SpriteObject implements ICollidableWithTiles {
 		setFriction(0.1f);
 		this.world = world;
 	}
-	
-	public void draw(PGraphics g)
-	{
+
+	public void draw(PGraphics g) {
 		g.image(playerSprite, x, y);
 	}
 
@@ -80,7 +79,7 @@ public class Player extends SpriteObject implements ICollidableWithTiles {
 	public void update() {
 		moveIt();
 		jumpIt();
-
+//		playerSprite = world.loadImage(Game.MEDIA_URL.concat("player.png"));
 	}
 
 	@Override
@@ -91,7 +90,7 @@ public class Player extends SpriteObject implements ICollidableWithTiles {
 		PVector vector;
 		for (CollidedTile ct : collidedTiles) {
 			if (ct.getTile() instanceof WallTile) {
-				
+
 				try {
 					vector = world.getTileMap().getTilePixelLocation(ct.getTile());
 					if (ct.getCollisionSide() == CollisionSide.TOP) {
@@ -127,13 +126,12 @@ public class Player extends SpriteObject implements ICollidableWithTiles {
 					e.printStackTrace();
 				}
 
-//				if (ct.getTile() instanceof BackgroundTile) {
-//					
-//					if (ct.getCollisionSide() == CollisionSide.INSIDE) {
-//						playerSprite = world.loadImage(Game.MEDIA_URL.concat("player2.png"));
-//					}
-//				}
-
+			}
+			if (ct.getTile() instanceof BackgroundTile) {
+				
+				if (ct.getCollisionSide() == CollisionSide.INSIDE) {
+//					playerSprite = world.loadImage(Game.MEDIA_URL.concat("player2.png"));
+				}
 			}
 		}
 	}
