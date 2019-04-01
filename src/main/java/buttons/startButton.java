@@ -3,21 +3,22 @@ package buttons;
 import game.Game;
 
 public class startButton extends Button {
-	private Game game;
 
-	public startButton(Game game, String text, int fontSize) {
-		super(text, fontSize);
-		this.game = game;
+
+	public startButton(String text, int fontSize, Game game) {
+		super(text, fontSize, game);
 	}
 	
-	public startButton(Game game, String text, int fontSize, int xSize, int ySize) {
-		super(text, fontSize, xSize, ySize);
-		this.game = game;
+	public startButton(String text, int fontSize, int xSize, int ySize, Game game) {
+		super(text, fontSize, xSize, ySize, game);
+
 	}
 
+
 	@Override
-	public void clickedButton() {
+	public void clickedButton(Game game) {
 		game.levelSelector();
+		
 	}
 	
 }

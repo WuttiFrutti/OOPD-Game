@@ -16,26 +16,28 @@ import nl.han.ica.oopg.engine.GameEngine;
 import nl.han.ica.oopg.objects.Sprite;
 import nl.han.ica.oopg.tile.TileMap;
 import nl.han.ica.oopg.tile.TileType;
+import nl.han.ica.oopg.userinput.IKeyInput;
 import nl.han.ica.oopg.view.View;
-import nl.han.ica.oopg.view.Viewport;
 import processing.core.PImage;
 import tiles.BackgroundTile;
 import tiles.WallTile;
 
 public class Game extends GameEngine {
-	private Player player;
 	private int screenXSize = 1600;
 	private int screenYSize = 896;
-	private PImage backgroundImage = loadImage(Game.MEDIA_URL.concat("background.bmp"));
 	private static ArrayList<Room> rooms = new ArrayList<>();
 	private int roomSpeed;
 	public static String MEDIA_URL = "src/main/java/game/Media/";
 	private View levelView;
+	private int update = 0;
+	private int maxLevelSize;
+	
 	
 	public static void main(String[] args) {
 		Game tw = new Game();
 		tw.runSketch();
 		roomsLoader();
+		
 	}
 
 	private static void roomsLoader() {
@@ -50,19 +52,26 @@ public class Game extends GameEngine {
 			e.printStackTrace();
 		}
 	}
+	
+	public void resetPlayer() {
+		deleteAllGameObjectsOfType(Player.class);
+		Player player = new Player(this);
+		addGameObject(player, 128, 128);
+	}
 
 	public void startGame(int level) {
-		Room room = rooms.get(level);
-		System.out.println(room.getViewPortX());
-		
+		Room room = rooms.get(level);		
 		initializeTileMap(level, room.getTilesMap());
 		roomSpeed = room.getSpeed();
 		deleteAllGameOBjects();
-		player = new Player(this);
-		addGameObject(player, 200, 50);
+		Player player = new Player(this);
+		addGameObject(player, 128, 128);
 		levelView = new View(room.getViewPortX(), room.getViewPortY());
 		levelView.setBackground(64, 64, 64);
 		setView(levelView);
+		PauseMenu pause = new PauseMenu(this);
+		addGameObject(pause);
+		maxLevelSize = room.getRoomX();
 	}
 
 	public void levelSelector() {
@@ -94,7 +103,7 @@ public class Game extends GameEngine {
 		menu.setBackground(64, 64, 64);
 		setView(menu);
 		size(screenXSize, screenYSize);
-		startButton startButton = new startButton(this, "Start Game", fontSize);
+		startButton startButton = new startButton("Start Game", fontSize, this);
 		addGameObject(startButton, (screenXSize / 2) - (startButton.getWidth() / 2),
 				(screenYSize / 2) - (startButton.getHeight() / 2));
 	}
@@ -113,12 +122,23 @@ public class Game extends GameEngine {
 
 	@Override
 	public void update() {
+		update ++;
+		if(roomSpeed != 0) {
+		if(update % roomSpeed == 0) {
 		updateView();
+		}
+		}
 	}
 
 	public void updateView() {
-		if (levelView != null) {
-			levelView.getViewport().setX(levelView.getViewport().getX() + roomSpeed);
+		if (levelView != null && levelView.getViewport().getX() < maxLevelSize - levelView.getViewport().getZoomWidth()) {
+			levelView.getViewport().setX(levelView.getViewport().getX() + 1);
 		}
 	}
+	
+	public void resetTileMap() {
+		tileMap = new TileMap(0);
+	}
+	
+	
 }

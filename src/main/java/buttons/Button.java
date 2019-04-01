@@ -10,23 +10,26 @@ public abstract class Button extends SpriteObject{
 	private Sprite hoverSprite = new Sprite(Game.MEDIA_URL.concat("Start_Game_Hover.png"));
 	private boolean hover;
 	private String text;
-	private int fontSize, xSize, ySize;
+	private int fontSize;
+	private Game world;
 
-	public Button(String text, int fontSize, int xSize, int ySize) {
+	public Button(String text, int fontSize, int xSize, int ySize , Game world) {
 		super(new Sprite(Game.MEDIA_URL.concat("Start_Game.png")));
 		this.text = text;
 		this.fontSize = fontSize;
 		sprite.resize(xSize, ySize);
 		hoverSprite.resize(xSize, ySize);
+		this.world = world;
 	}
 	
-	public Button(String text, int fontSize) {
+	public Button(String text, int fontSize,Game world) {
 		super(new Sprite(Game.MEDIA_URL.concat("Start_Game.png")));
 		this.text = text;
 		this.fontSize = fontSize;
+		this.world = world;
 	}
 	
-	public abstract void clickedButton();
+	public abstract void clickedButton(Game game);
 
 	@Override
 	public void update() {	
@@ -51,7 +54,7 @@ public abstract class Button extends SpriteObject{
 	@Override
 	public void mouseReleased(int mouseX, int mouseY, int button) {
 		if(mouseX < x + sprite.getWidth() && mouseX > x && mouseY > y && mouseY < y + sprite.getHeight()) {
-			clickedButton();
+			clickedButton(world);
 		}
     }
 	
