@@ -20,12 +20,17 @@ public class Player extends SpriteObject implements ICollidableWithTiles {
 	private boolean grounded, isHolding, isJumping, leftIsDown, rightIsDown;
 	private int jumpTime = 25;
 	PImage playerSprite;
+	PImage playerVisible;
+	PImage playerInVisible;
+
 	private float speedMult = 0.05f, yPos = -1;
 
 	public Player(Game world) {
 
 		super(new Sprite(Game.MEDIA_URL.concat("player.png")));
-		playerSprite = world.loadImage(Game.MEDIA_URL.concat("player2.png"));
+		playerVisible = world.loadImage(Game.MEDIA_URL.concat("player2.png"));
+		playerInVisible = world.loadImage(Game.MEDIA_URL.concat("player.png"));
+		playerSprite = playerInVisible;
 		setGravity(1);
 		setFriction(0.1f);
 		this.world = world;
@@ -79,12 +84,11 @@ public class Player extends SpriteObject implements ICollidableWithTiles {
 	public void update() {
 		moveIt();
 		jumpIt();
-//		playerSprite = world.loadImage(Game.MEDIA_URL.concat("player.png"));
 	}
 
 	@Override
 	public void tileCollisionOccurred(List<CollidedTile> collidedTiles) {
-
+//		playerSprite = playerInVisible;
 		grounded = false;
 
 		PVector vector;
@@ -129,9 +133,11 @@ public class Player extends SpriteObject implements ICollidableWithTiles {
 			}
 			if (ct.getTile() instanceof BackgroundTile) {
 				
-				if (ct.getCollisionSide() == CollisionSide.INSIDE) {
-//					playerSprite = world.loadImage(Game.MEDIA_URL.concat("player2.png"));
-				}
+//				if (ct.getCollisionSide() == CollisionSide.INSIDE) {
+//					if(playerSprite == playerInVisible) {
+//					playerSprite = playerVisible;
+//					}
+//				}
 			}
 		}
 	}

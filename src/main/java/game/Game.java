@@ -1,9 +1,6 @@
 package game;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,23 +24,24 @@ import tiles.WallTile;
 
 public class Game extends GameEngine {
 	private Player player;
-	private int screenXSize = 1024;
-	private int screenYSize = 768;
+	private int screenXSize = 1600;
+	private int screenYSize = 896;
 	private PImage backgroundImage = loadImage(Game.MEDIA_URL.concat("background.bmp"));
-	private Viewport followingView = new Viewport(-500, -1, 1536, 1024);
 	private static ArrayList<Room> rooms = new ArrayList<>();
-	
+	private int roomSpeed;
 	public static String MEDIA_URL = "src/main/java/game/Media/";
-	
-	
+	private View levelView;
 	
 	public static void main(String[] args) {
 		Game tw = new Game();
-		tw.runSketch();		
+		tw.runSketch();
+		roomsLoader();
+	}
+
+	private static void roomsLoader() {
 		ObjectMapper objectMapper = new ObjectMapper();
-		
 		try {
-			rooms.addAll(objectMapper.readValue(new File("resources/levels"), new TypeReference<List<Room>>(){}));
+			rooms.addAll(objectMapper.readValue(new File("resources/levels"), new TypeReference<List<Room>>() {	}));
 		} catch (JsonParseException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
@@ -54,135 +52,73 @@ public class Game extends GameEngine {
 	}
 
 	public void startGame(int level) {
-		int levelYSize = 1024, levelXSize = 1536;
-		initializeTileMap(level);
+		Room room = rooms.get(level);
+		System.out.println(room.getViewPortX());
+		
+		initializeTileMap(level, room.getTilesMap());
+		roomSpeed = room.getSpeed();
 		deleteAllGameOBjects();
 		player = new Player(this);
 		addGameObject(player, 200, 50);
-//		CenterFollowingViewport followingView = new CenterFollowingViewport(player, levelXSize, levelYSize);
-//		followingView.setTolerance(0, 0, 0, 0);
-		View Level = new View(followingView, levelXSize, levelYSize);
-		backgroundImage.resize(screenXSize, screenYSize);
-		background(backgroundImage);
-		setView(Level);
+		levelView = new View(room.getViewPortX(), room.getViewPortY());
+		levelView.setBackground(64, 64, 64);
+		setView(levelView);
 	}
 
 	public void levelSelector() {
+		int buttonAmount = rooms.size();
+		int newLine = 0;
+		int resetI = 0;
+		int fontSize = 20;
+		int levelButtonWidth = 100;
+		int levelButtonHeight = 100;
+		int levelButtonOffSet = 256;
+		int levelButtonDistance = 128;
 		deleteAllGameOBjects();
-		for (int i = 0; i < 3; i++) {
-			LevelButton[] levels = new LevelButton[3];
-			levels[i] = new LevelButton(this, Integer.toString(i + 1), 20, 100, 100, i);
-			addGameObject(levels[i], 200 + (200 * i), 512);
+		LevelButton[] levels = new LevelButton[buttonAmount];
+		for (int i = 0; i < buttonAmount; i++) {
+			resetI++;
+			if (i % 4 == 0) {
+				newLine += levelButtonDistance;
+				resetI = 0;
+			}
+			levels[i] = new LevelButton(this, Integer.toString(i + 1), fontSize, levelButtonWidth, levelButtonHeight,i);
+			addGameObject(levels[i], levelButtonOffSet + levelButtonDistance * resetI, levelButtonOffSet + newLine);
 		}
 	}
 
 	@Override
 	public void setupGame() {
-
+		int fontSize = 40;
 		View menu = new View(screenXSize, screenYSize);
-
+		menu.setBackground(64, 64, 64);
 		setView(menu);
 		size(screenXSize, screenYSize);
-		backgroundImage.resize(screenXSize, screenYSize);
-		menu.setBackground(backgroundImage);
-
-		startButton startButton = new startButton(this, "Start Game", 40);
+		startButton startButton = new startButton(this, "Start Game", fontSize);
 		addGameObject(startButton, (screenXSize / 2) - (startButton.getWidth() / 2),
 				(screenYSize / 2) - (startButton.getHeight() / 2));
 	}
 
-	public void showLevelButtons() {
-
-	}
-
-	private void initializeTileMap(int level) {
+	private void initializeTileMap(int level, int[][] tilesMap) {
 		Sprite WallSprite = new Sprite(this.MEDIA_URL.concat("Box.png"));
 		Sprite BackgroundTile = new Sprite(this.MEDIA_URL.concat("seethrough.png"));
 		TileType<WallTile> WallTileType = new TileType<>(WallTile.class, WallSprite);
 		TileType<BackgroundTile> BackgroundTileType = new TileType<>(BackgroundTile.class, BackgroundTile);
-
 		TileType[] tileTypes = { WallTileType, BackgroundTileType };
 		int tileSize = 64;
-		
-		
 		Room room = rooms.get(level);
-		tileMap = new TileMap(tileSize, tileTypes, room.getTilesMap());
-		
-//		int tilesMap[][][] = {
-//				// level 0
-//				{ { 0, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1,
-//								-1 },
-//						{ 0, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1 },
-//						{ 0, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1,
-//								-1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1,
-//								-1 },
-//						{ 0, -1, -1, -1, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1,
-//								-1 },
-//						{ 0, 0, 0, 0, 0, -1, -1, -1, 0, 0, 0, 0, 0, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1,
-//								-1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, 0, 0, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1,
-//								-1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-//								-1 },
-//						{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
-//				// level 1
-//				{ { 0, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1 },
-//						{ 0, -1, -1, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1 },
-//						{ 0, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, 0, 0, 0, -1 },
-//						{ 0, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, 0, 0, 0, -1, -1, -1, -1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, 0, 0, 0, -1, -1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, -1, -1, -1, -1, -1 },
-//						{ 0, -1, -1, -1, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, 0, 0, 0, -1, -1 },
-//						{ 0, 0, 0, 0, 0, -1, -1, -1, 0, 0, 0, 0, 0, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1,
-//								-1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1 },
-//						{ 0, -1, 0, 0, 0, -1, -1, 0, 0, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, 0, 0, 0, -1, -1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1,
-//								-1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-//								-1 },
-//						{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, },
-//				// level 2
-//				{ { 0, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1,
-//								-1 },
-//						{ 0, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1 },
-//						{ 0, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1,
-//								-1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1,
-//								-1 },
-//						{ 0, -1, -1, -1, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, 0, 0, 0, -1, -1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1,
-//								-1 },
-//						{ 0, 0, 0, 0, 0, -1, -1, -1, 0, 0, 0, 0, 0, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1,
-//								-1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1 },
-//						{ 0, -1, 0, 0, 0, -1, -1, 0, 0, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1,
-//								-1 },
-//						{ 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-//								-1 },
-//						{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, } };
-		
+		tileMap = new TileMap(tileSize, tileTypes, tilesMap);
+
 	}
 
 	@Override
 	public void update() {
-		followingView.setX(followingView.getX() + 2);
+		updateView();
 	}
 
+	public void updateView() {
+		if (levelView != null) {
+			levelView.getViewport().setX(levelView.getViewport().getX() + roomSpeed);
+		}
+	}
 }

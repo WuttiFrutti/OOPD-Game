@@ -1,16 +1,20 @@
 package game;
 
 public class Room {
+	private int viewPortX;
+	private int viewPortY;
 	private int tilesMap[][];
 	private int roomX;
 	private int roomY;
-	private float speed;
+	private int speed;
 
-	public Room(int tilesMap[][], int roomX, int roomY, float speed) {
+	public Room(int tilesMap[][], int roomX, int roomY, int speed, int viewPortX, int viewPortY) {
 		this.tilesMap = tilesMap;
 		this.roomX = roomX;
 		this.roomY = roomY;
 		this.speed = speed;
+		this.viewPortX = viewPortX;
+		this.viewPortY = viewPortY;
 
 	}
 
@@ -26,7 +30,7 @@ public class Room {
 		this.roomY = roomY;
 	}
 
-	public void setSpeed(float speed) {
+	public void setSpeed(int speed) {
 		this.speed = speed;
 	}
 
@@ -42,12 +46,28 @@ public class Room {
 		return roomY;
 	}
 
-	public float getSpeed() {
+	public int getSpeed() {
 		return speed;
 	}
 
 	public int[][] getTilesMap() {
 		return tilesMap;
+	}
+
+	public int getViewPortX() {
+		return viewPortX;
+	}
+
+	public int getViewPortY() {
+		return viewPortY;
+	}
+
+	public void setViewPortX(int viewPortX) {
+		this.viewPortX = viewPortX;
+	}
+
+	public void setViewPortY(int viewPortY) {
+		this.viewPortY = viewPortY;
 	}
 
 }
