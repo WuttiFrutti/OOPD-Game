@@ -12,9 +12,7 @@ import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PVector;
 import tiles.BackgroundTile;
-import tiles.SpikeTile;
 import tiles.WallTile;
-import tiles.WinTile;
 
 public class Player extends SpriteObject implements ICollidableWithTiles {
 	private Game world;
@@ -22,24 +20,31 @@ public class Player extends SpriteObject implements ICollidableWithTiles {
 	private boolean grounded, isHolding, isJumping, leftIsDown, rightIsDown;
 	private int jumpTime = 25;
 	PImage playerSprite;
-	PImage playerVisible;
-	PImage playerInVisible;
-
+	PImage playerVisible = world.loadImage(Game.MEDIA_URL.concat("player2.png"));
+	PImage playerInVisible = world.loadImage(Game.MEDIA_URL.concat("player.png"));
 	private float speedMult = 0.05f, yPos = -1;
 
 	public Player(Game world) {
 
 		super(new Sprite(Game.MEDIA_URL.concat("player.png")));
-		playerVisible = world.loadImage(Game.MEDIA_URL.concat("player2.png"));
-		playerInVisible = world.loadImage(Game.MEDIA_URL.concat("player.png"));
 		playerSprite = playerInVisible;
 		setGravity(1);
 		setFriction(0.1f);
 		this.world = world;
 	}
-
-	public void draw(PGraphics g) {
+	
+	@Override
+	public void draw(PGraphics g)
+	{
 		g.image(playerSprite, x, y);
+	}
+	
+	public void setVisible(boolean visible) {
+		if(visible) {
+			playerSprite = playerVisible;
+		}else {
+			playerSprite = playerInVisible;
+		}
 	}
 
 	@Override
@@ -86,11 +91,12 @@ public class Player extends SpriteObject implements ICollidableWithTiles {
 	public void update() {
 		moveIt();
 		jumpIt();
+
 	}
 
 	@Override
 	public void tileCollisionOccurred(List<CollidedTile> collidedTiles) {
-//		playerSprite = playerInVisible;
+
 		grounded = false;
 
 		PVector vector;
@@ -131,13 +137,12 @@ public class Player extends SpriteObject implements ICollidableWithTiles {
 				} catch (TileNotFoundException e) {
 					e.printStackTrace();
 				}
+				if (ct.getTile() instanceof BackgroundTile) {
+					if (ct.getCollisionSide() == CollisionSide.INSIDE) {
+						playerSprite = world.loadImage(Game.MEDIA_URL.concat("player2.png"));
+					}
+				}
 
-			}
-			if (ct.getTile() instanceof SpikeTile) {
-				world.gameOver();
-			}
-			if (ct.getTile() instanceof WinTile) {
-				world.getPauseMenu().nextLevelPause();
 			}
 		}
 	}
