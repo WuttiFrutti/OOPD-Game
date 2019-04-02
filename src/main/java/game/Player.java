@@ -20,14 +20,16 @@ public class Player extends SpriteObject implements ICollidableWithTiles {
 	private boolean grounded, isHolding, isJumping, leftIsDown, rightIsDown;
 	private int jumpTime = 25;
 	PImage playerSprite;
-	PImage playerVisible = world.loadImage(Game.MEDIA_URL.concat("player2.png"));
-	PImage playerInVisible = world.loadImage(Game.MEDIA_URL.concat("player.png"));
+	PImage playerVisible;
+	PImage playerInVisible;
 	private float speedMult = 0.05f, yPos = -1;
 
 	public Player(Game world) {
 
 		super(new Sprite(Game.MEDIA_URL.concat("player.png")));
 		playerSprite = playerInVisible;
+		playerVisible = world.loadImage(Game.MEDIA_URL.concat("player2.png"));
+		playerInVisible = world.loadImage(Game.MEDIA_URL.concat("player.png"));
 		setGravity(1);
 		setFriction(0.1f);
 		this.world = world;

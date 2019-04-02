@@ -53,7 +53,9 @@ public class PauseMenu extends GameObject {
 	
 	public void setGameOver(boolean gameOver) {
 		this.gameOver = gameOver;
-		
+		if(gameOver) {
+			
+		}
 	}
 
 	@Override

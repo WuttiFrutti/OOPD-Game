@@ -35,6 +35,7 @@ public class Game extends GameEngine {
 	private PauseMenu pause;
 	private int currentLevel;
 	private int maxLevelSize;
+	private Player player;
 	
 	
 	public static void main(String[] args) {
@@ -69,7 +70,7 @@ public class Game extends GameEngine {
 		initializeTileMap(level, room.getTilesMap());
 		roomSpeed = room.getSpeed();
 		deleteAllGameOBjects();
-		Player player = new Player(this);
+		player = new Player(this);
 		addGameObject(player, 128, 128);
 		levelView = new View(room.getViewPortX(), room.getViewPortY());
 		levelView.setBackground(64, 64, 64);
@@ -178,5 +179,9 @@ public class Game extends GameEngine {
 	
 	public PauseMenu getPauseMenu() {
 		return pause;
+	}
+	
+	public Player getPlayer() {
+		return player;
 	}
 }
