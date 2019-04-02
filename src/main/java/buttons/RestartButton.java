@@ -16,6 +16,8 @@ public class RestartButton extends Button{
 		game.resetPlayer();
 		game.getView().getViewport().setX(0);
 		pauseMenu.setDrawPauseMenu(false);
+		pauseMenu.setGameOver(false);
+		game.resumeGame();
 		
 	}
 

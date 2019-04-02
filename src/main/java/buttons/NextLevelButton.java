@@ -3,22 +3,21 @@ package buttons;
 import game.Game;
 import game.PauseMenu;
 
-public class ExitButton extends Button{
+public class NextLevelButton extends Button{
 	private PauseMenu pauseMenu;
-	
-	public ExitButton(String text, int fontSize, Game game, PauseMenu pauseMenu) {
-		super(text, fontSize, game);
+	public NextLevelButton(String text, int fontSize, Game world, PauseMenu pauseMenu) {
+		super(text, fontSize, world);
 		this.pauseMenu = pauseMenu;
 	}
 
 	@Override
 	public void clickedButton(Game game) {
 		pauseMenu.setDrawPauseMenu(false);
-		game.deleteAllGameOBjects();
-		game.setupGame();
-		game.resetTileMap();
+		pauseMenu.setGameOver(false);
 		game.resumeGame();
+		game.nextLevel();
 		
 	}
-
+	
+	
 }

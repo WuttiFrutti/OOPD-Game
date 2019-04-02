@@ -12,7 +12,9 @@ import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PVector;
 import tiles.BackgroundTile;
+import tiles.SpikeTile;
 import tiles.WallTile;
+import tiles.WinTile;
 
 public class Player extends SpriteObject implements ICollidableWithTiles {
 	private Game world;
@@ -131,13 +133,11 @@ public class Player extends SpriteObject implements ICollidableWithTiles {
 				}
 
 			}
-			if (ct.getTile() instanceof BackgroundTile) {
-				
-//				if (ct.getCollisionSide() == CollisionSide.INSIDE) {
-//					if(playerSprite == playerInVisible) {
-//					playerSprite = playerVisible;
-//					}
-//				}
+			if (ct.getTile() instanceof SpikeTile) {
+				world.gameOver();
+			}
+			if (ct.getTile() instanceof WinTile) {
+				world.getPauseMenu().nextLevelPause();
 			}
 		}
 	}

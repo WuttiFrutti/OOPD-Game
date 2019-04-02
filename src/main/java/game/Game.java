@@ -20,7 +20,9 @@ import nl.han.ica.oopg.userinput.IKeyInput;
 import nl.han.ica.oopg.view.View;
 import processing.core.PImage;
 import tiles.BackgroundTile;
+import tiles.SpikeTile;
 import tiles.WallTile;
+import tiles.WinTile;
 
 public class Game extends GameEngine {
 	private int screenXSize = 1600;
@@ -30,6 +32,8 @@ public class Game extends GameEngine {
 	public static String MEDIA_URL = "src/main/java/game/Media/";
 	private View levelView;
 	private int update = 0;
+	private PauseMenu pause;
+	private int currentLevel;
 	private int maxLevelSize;
 	
 	
@@ -60,6 +64,7 @@ public class Game extends GameEngine {
 	}
 
 	public void startGame(int level) {
+		currentLevel = level;
 		Room room = rooms.get(level);		
 		initializeTileMap(level, room.getTilesMap());
 		roomSpeed = room.getSpeed();
@@ -69,10 +74,12 @@ public class Game extends GameEngine {
 		levelView = new View(room.getViewPortX(), room.getViewPortY());
 		levelView.setBackground(64, 64, 64);
 		setView(levelView);
-		PauseMenu pause = new PauseMenu(this);
+		pause = new PauseMenu(this);
 		addGameObject(pause);
 		maxLevelSize = room.getRoomX();
 	}
+	
+	
 
 	public void levelSelector() {
 		int buttonAmount = rooms.size();
@@ -95,6 +102,10 @@ public class Game extends GameEngine {
 			addGameObject(levels[i], levelButtonOffSet + levelButtonDistance * resetI, levelButtonOffSet + newLine);
 		}
 	}
+	
+	public void restartLevel() {
+		
+	}
 
 	@Override
 	public void setupGame() {
@@ -109,11 +120,31 @@ public class Game extends GameEngine {
 	}
 
 	private void initializeTileMap(int level, int[][] tilesMap) {
-		Sprite WallSprite = new Sprite(this.MEDIA_URL.concat("Box.png"));
-		Sprite BackgroundTile = new Sprite(this.MEDIA_URL.concat("seethrough.png"));
-		TileType<WallTile> WallTileType = new TileType<>(WallTile.class, WallSprite);
-		TileType<BackgroundTile> BackgroundTileType = new TileType<>(BackgroundTile.class, BackgroundTile);
-		TileType[] tileTypes = { WallTileType, BackgroundTileType };
+		Sprite SpikeSprite = new Sprite(this.MEDIA_URL.concat("SpikeTile.png"));
+		Sprite BackgroundSprite = new Sprite(this.MEDIA_URL.concat("seethrough.png"));
+		Sprite WinSprite = new Sprite(this.MEDIA_URL.concat("WinSprite.png"));
+		
+		TileType<WinTile> WinTileType = new TileType<>(WinTile.class, WinSprite);
+		TileType<WallTile> WallTileType0 = new TileType<>(WallTile.class, new Sprite(this.MEDIA_URL.concat("Boxes/Box.png")));
+		TileType<WallTile> WallTileType1 = new TileType<>(WallTile.class, new Sprite(this.MEDIA_URL.concat("Boxes/BoxB.png")));
+		TileType<WallTile> WallTileType2 = new TileType<>(WallTile.class, new Sprite(this.MEDIA_URL.concat("Boxes/BoxBT.png")));
+		TileType<WallTile> WallTileType3 = new TileType<>(WallTile.class, new Sprite(this.MEDIA_URL.concat("Boxes/BoxL.png")));
+		TileType<WallTile> WallTileType4 = new TileType<>(WallTile.class, new Sprite(this.MEDIA_URL.concat("Boxes/BoxLB.png")));
+		TileType<WallTile> WallTileType5 = new TileType<>(WallTile.class, new Sprite(this.MEDIA_URL.concat("Boxes/BoxLBR.png")));
+		TileType<WallTile> WallTileType6 = new TileType<>(WallTile.class, new Sprite(this.MEDIA_URL.concat("Boxes/BoxLBRT.png")));
+		TileType<WallTile> WallTileType7 = new TileType<>(WallTile.class, new Sprite(this.MEDIA_URL.concat("Boxes/BoxLBT.png")));
+		TileType<WallTile> WallTileType8 = new TileType<>(WallTile.class, new Sprite(this.MEDIA_URL.concat("Boxes/BoxLR.png")));
+		TileType<WallTile> WallTileType9 = new TileType<>(WallTile.class, new Sprite(this.MEDIA_URL.concat("Boxes/BoxLRT.png")));
+		TileType<WallTile> WallTileType10 = new TileType<>(WallTile.class, new Sprite(this.MEDIA_URL.concat("Boxes/BoxLT.png")));
+		TileType<WallTile> WallTileType11 = new TileType<>(WallTile.class, new Sprite(this.MEDIA_URL.concat("Boxes/BoxR.png")));
+		TileType<WallTile> WallTileType12 = new TileType<>(WallTile.class, new Sprite(this.MEDIA_URL.concat("Boxes/BoxRB.png")));
+		TileType<WallTile> WallTileType13 = new TileType<>(WallTile.class, new Sprite(this.MEDIA_URL.concat("Boxes/BoxRBT.png")));
+		TileType<WallTile> WallTileType14 = new TileType<>(WallTile.class, new Sprite(this.MEDIA_URL.concat("Boxes/BoxRT.png")));
+		TileType<WallTile> WallTileType15 = new TileType<>(WallTile.class, new Sprite(this.MEDIA_URL.concat("Boxes/BoxT.png")));
+		TileType<BackgroundTile> BackgroundTileType = new TileType<>(BackgroundTile.class, BackgroundSprite);
+		TileType<SpikeTile> SpikeTileType = new TileType<>(SpikeTile.class, SpikeSprite);
+		
+		TileType[] tileTypes = { WallTileType0,WallTileType1, WallTileType2, WallTileType3, WallTileType4, WallTileType5, WallTileType6, WallTileType7, WallTileType8, WallTileType9, WallTileType10, WallTileType11, WallTileType12, WallTileType13, WallTileType14, WallTileType15, BackgroundTileType, SpikeTileType, WinTileType};
 		int tileSize = 64;
 		Room room = rooms.get(level);
 		tileMap = new TileMap(tileSize, tileTypes, tilesMap);
@@ -140,5 +171,15 @@ public class Game extends GameEngine {
 		tileMap = new TileMap(0);
 	}
 	
+	public void nextLevel() {
+		startGame(currentLevel + 1);
+	}
 	
+	public void gameOver() {
+		pause.gameOverPause();
+	}
+	
+	public PauseMenu getPauseMenu() {
+		return pause;
+	}
 }
