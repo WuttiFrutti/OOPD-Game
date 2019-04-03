@@ -6,15 +6,15 @@ import nl.han.ica.oopg.objects.SpriteObject;
 import processing.core.PGraphics;
 
 public abstract class Button extends SpriteObject{
-	private Sprite sprite = new Sprite(Game.MEDIA_URL.concat("Start_Game.png"));
-	private Sprite hoverSprite = new Sprite(Game.MEDIA_URL.concat("Start_Game_Hover.png"));
+	private Sprite sprite = new Sprite(Game.MEDIA_URL.concat("Button.png"));
+	private Sprite hoverSprite = new Sprite(Game.MEDIA_URL.concat("Button_Hover.png"));
 	private boolean hover;
 	private String text;
 	private int fontSize;
 	private Game world;
 
 	public Button(String text, int fontSize, int xSize, int ySize , Game world) {
-		super(new Sprite(Game.MEDIA_URL.concat("Start_Game.png")));
+		super(new Sprite(Game.MEDIA_URL.concat("Button.png")));
 		this.text = text;
 		this.fontSize = fontSize;
 		sprite.resize(xSize, ySize);
@@ -23,7 +23,7 @@ public abstract class Button extends SpriteObject{
 	}
 	
 	public Button(String text, int fontSize,Game world) {
-		super(new Sprite(Game.MEDIA_URL.concat("Start_Game.png")));
+		super(new Sprite(Game.MEDIA_URL.concat("Button.png")));
 		this.text = text;
 		this.fontSize = fontSize;
 		this.world = world;
@@ -46,6 +46,7 @@ public abstract class Button extends SpriteObject{
 		}else {
 			g.image(sprite.getPImage(), x, y);
 		}
+			g.fill(255,255,255);
 	        g.textSize(fontSize);
 	        g.textAlign(CENTER);
 	        g.text(text, x + (sprite.getWidth() / 2), y + (sprite.getHeight() / 2) + (fontSize / 4));

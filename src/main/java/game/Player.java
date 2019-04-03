@@ -11,7 +11,6 @@ import nl.han.ica.oopg.objects.SpriteObject;
 import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PVector;
-import tiles.BackgroundTile;
 import tiles.SpikeTile;
 import tiles.WallTile;
 import tiles.WinTile;
@@ -28,10 +27,11 @@ public class Player extends SpriteObject implements ICollidableWithTiles {
 
 	public Player(Game world) {
 
-		super(new Sprite(Game.MEDIA_URL.concat("player.png")));
-		playerSprite = world.loadImage(Game.MEDIA_URL.concat("player.png"));
-//		playerVisible = world.loadImage(Game.MEDIA_URL.concat("player2.png"));
-//		playerInVisible = 
+		super(new Sprite(Game.MEDIA_URL.concat("Player_Invisible.png")));
+		playerVisible = world.loadImage(Game.MEDIA_URL.concat("Player_Visible.png"));
+		playerInVisible = world.loadImage(Game.MEDIA_URL.concat("Player_Invisible.png"));
+		playerSprite = playerInVisible;
+
 		setGravity(1);
 		setFriction(0.1f);
 		this.world = world;
@@ -95,7 +95,15 @@ public class Player extends SpriteObject implements ICollidableWithTiles {
 	public void update() {
 		moveIt();
 		jumpIt();
-
+		checkViewPort();
+	}
+	
+	 
+	
+	public void checkViewPort() {
+		if(world.getView().getViewport().getX() > this.getX() + (this.getWidth() / 2)  || world.getView().getViewport().getY() > this.getY() + (this.getHeight() / 2) || world.getView().getViewport().getY() + world.getView().getViewport().getZoomHeight() < this.getY() + (this.getHeight() / 2)) {
+			world.gameOver();
+		}
 	}
 
 	@Override
@@ -105,10 +113,11 @@ public class Player extends SpriteObject implements ICollidableWithTiles {
 
 		PVector vector;
 		for (CollidedTile ct : collidedTiles) {
+			vector = world.getTileMap().getTilePixelLocation(ct.getTile());
 			if (ct.getTile() instanceof WallTile) {
-
+				
 				try {
-					vector = world.getTileMap().getTilePixelLocation(ct.getTile());
+					
 					if (ct.getCollisionSide() == CollisionSide.TOP) {
 						if (getX() + getWidth() > vector.x && getX() < vector.x + ct.getTile().getSprite().getWidth()) {
 							setY(vector.y - getHeight());
@@ -145,7 +154,10 @@ public class Player extends SpriteObject implements ICollidableWithTiles {
 
 			}
 			if (ct.getTile() instanceof SpikeTile) {
-				world.gameOver();
+				if (getX() + getWidth() > vector.x && getX() < vector.x + ct.getTile().getSprite().getWidth() && getY() < vector.y + ct.getTile().getSprite().getHeight()
+						&& getY() + getHeight() > vector.y) {
+					world.gameOver();
+				}
 			}
 			if (ct.getTile() instanceof WinTile) {
 				world.getPauseMenu().nextLevelPause();

@@ -14,12 +14,14 @@ import buttons.LevelButton;
 import buttons.startButton;
 import nl.han.ica.oopg.engine.GameEngine;
 import nl.han.ica.oopg.objects.Sprite;
+import nl.han.ica.oopg.objects.TextObject;
 import nl.han.ica.oopg.tile.TileMap;
 import nl.han.ica.oopg.tile.TileType;
 import nl.han.ica.oopg.userinput.IKeyInput;
 import nl.han.ica.oopg.view.View;
+import nl.han.ica.oopg.view.Viewport;
 import processing.core.PImage;
-import tiles.BackgroundTile;
+import tiles.BlueLinesTile;
 import tiles.SpikeTile;
 import tiles.WallTile;
 import tiles.WinTile;
@@ -72,7 +74,8 @@ public class Game extends GameEngine {
 		deleteAllGameOBjects();
 		player = new Player(this);
 		addGameObject(player, 128, 128);
-		levelView = new View(room.getViewPortX(), room.getViewPortY());
+		Viewport movingLevelView = new Viewport(0, 0, room.getViewPortX(), room.getViewPortY());
+		levelView = new View(movingLevelView,room.getRoomX(), room.getRoomY());
 		levelView.setBackground(64, 64, 64);
 		setView(levelView);
 		pause = new PauseMenu(this);
@@ -89,9 +92,14 @@ public class Game extends GameEngine {
 		int fontSize = 20;
 		int levelButtonWidth = 100;
 		int levelButtonHeight = 100;
-		int levelButtonOffSet = 256;
 		int levelButtonDistance = 128;
+		int levelButtonOffSetXMiddle = ((levelButtonWidth * buttonAmount) / 2) + ((levelButtonDistance - levelButtonWidth) * (buttonAmount -2));
+		int levelButtonOffSetX = (screenXSize / 2) - (levelButtonOffSetXMiddle);
+		int levelButtonOffSetY = screenYSize / 2;
 		deleteAllGameOBjects();
+		TextObject levelSelect = new TextObject("Choose Your level:", 40);
+		
+		addGameObject(levelSelect, screenXSize / 2 - ((levelSelect.getText().length() * levelSelect.getFontSize()) / 4), levelButtonOffSetY);
 		LevelButton[] levels = new LevelButton[buttonAmount];
 		for (int i = 0; i < buttonAmount; i++) {
 			resetI++;
@@ -100,13 +108,10 @@ public class Game extends GameEngine {
 				resetI = 0;
 			}
 			levels[i] = new LevelButton(this, Integer.toString(i + 1), fontSize, levelButtonWidth, levelButtonHeight,i);
-			addGameObject(levels[i], levelButtonOffSet + levelButtonDistance * resetI, levelButtonOffSet + newLine);
+			addGameObject(levels[i], levelButtonOffSetX + levelButtonDistance * resetI, levelButtonOffSetY + newLine);
 		}
 	}
 	
-	public void restartLevel() {
-		
-	}
 
 	@Override
 	public void setupGame() {
@@ -121,7 +126,7 @@ public class Game extends GameEngine {
 	}
 
 	private void initializeTileMap(int level, int[][] tilesMap) {	
-		TileType<WinTile> WinTileType = new TileType<>(WinTile.class, new Sprite(this.MEDIA_URL.concat("WinSprite.png")));
+		
 		TileType<WallTile> WallTileType0 = new TileType<>(WallTile.class, new Sprite(this.MEDIA_URL.concat("Boxes/Box.png")));
 		TileType<WallTile> WallTileType1 = new TileType<>(WallTile.class, new Sprite(this.MEDIA_URL.concat("Boxes/BoxB.png")));
 		TileType<WallTile> WallTileType2 = new TileType<>(WallTile.class, new Sprite(this.MEDIA_URL.concat("Boxes/BoxBT.png")));
@@ -138,15 +143,17 @@ public class Game extends GameEngine {
 		TileType<WallTile> WallTileType13 = new TileType<>(WallTile.class, new Sprite(this.MEDIA_URL.concat("Boxes/BoxRBT.png")));
 		TileType<WallTile> WallTileType14 = new TileType<>(WallTile.class, new Sprite(this.MEDIA_URL.concat("Boxes/BoxRT.png")));
 		TileType<WallTile> WallTileType15 = new TileType<>(WallTile.class, new Sprite(this.MEDIA_URL.concat("Boxes/BoxT.png")));
-		TileType<BackgroundTile> BackgroundTileType = new TileType<>(BackgroundTile.class, new Sprite(this.MEDIA_URL.concat("seethrough.png")));
+		TileType<WinTile> WinTileType = new TileType<>(WinTile.class, new Sprite(this.MEDIA_URL.concat("WinSprite.png")));
+		TileType<BlueLinesTile> BlueLinesTileType = new TileType<>(BlueLinesTile.class, new Sprite(this.MEDIA_URL.concat("Blue_Lines.png")));
 		TileType<SpikeTile> SpikeTileType = new TileType<>(SpikeTile.class, new Sprite(this.MEDIA_URL.concat("SpikeTile.png")));
-		TileType<SpikeTile> SpikeTileTypeLined = new TileType<>(SpikeTile.class, new Sprite(this.MEDIA_URL.concat("SpikeTileLined.png")));
+		TileType<SpikeTile> SpikeLinedTileType = new TileType<>(SpikeTile.class, new Sprite(this.MEDIA_URL.concat("SpikeTileLined.png")));
+		TileType<SpikeTile> SpikeLinedUTileType = new TileType<>(SpikeTile.class, new Sprite(this.MEDIA_URL.concat("SpikeTileU.png")));
+		TileType<SpikeTile> SpikeUTileType = new TileType<>(SpikeTile.class, new Sprite(this.MEDIA_URL.concat("SpikeTileLinedU.png")));
 		
-		TileType[] tileTypes = { WallTileType0,WallTileType1, WallTileType2, WallTileType3, WallTileType4, WallTileType5, WallTileType6, WallTileType7, WallTileType8, WallTileType9, WallTileType10, WallTileType11, WallTileType12, WallTileType13, WallTileType14, WallTileType15, BackgroundTileType, SpikeTileType, WinTileType, SpikeTileTypeLined};
+		TileType[] tileTypes = { WallTileType0,WallTileType1, WallTileType2, WallTileType3, WallTileType4, WallTileType5, WallTileType6, WallTileType7, WallTileType8, WallTileType9, WallTileType10, WallTileType11, WallTileType12, WallTileType13, WallTileType14, WallTileType15, BlueLinesTileType, SpikeTileType, WinTileType, SpikeLinedTileType,SpikeUTileType,SpikeLinedUTileType};
 		int tileSize = 64;
 		Room room = rooms.get(level);
 		tileMap = new TileMap(tileSize, tileTypes, tilesMap);
-
 	}
 
 	@Override
@@ -169,9 +176,6 @@ public class Game extends GameEngine {
 		tileMap = new TileMap(0);
 	}
 	
-	public void nextLevel() {
-		startGame(currentLevel + 1);
-	}
 	
 	public void gameOver() {
 		pause.gameOverPause();
@@ -184,4 +188,9 @@ public class Game extends GameEngine {
 	public Player getPlayer() {
 		return player;
 	}
+	public int getCurrentLevel() {
+		return currentLevel;
+	}
+	
+	
 }

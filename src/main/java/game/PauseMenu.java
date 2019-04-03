@@ -38,23 +38,24 @@ public class PauseMenu extends GameObject {
 	}
 	
 	public void nextLevelPause() {
+//		if(getCurrentLevel() == )
 		setDrawPauseMenu(true);
 		world.deleteAllGameObjectsOfType(ContinueButton.class);
 		NextLevelButton nextLevelButton = new NextLevelButton("Next Level", 40, world,this);
 		world.addGameObject(nextLevelButton,(world.getWidth() / 2) - (nextLevelButton.getWidth() / 2) + world.getView().getViewport().getX(), world.getHeight() / 3);
-		gameOver = true;
+		setGameOver(true);
 	}
 	
 	public void gameOverPause() {
 		setDrawPauseMenu(true);
 		world.deleteAllGameObjectsOfType(ContinueButton.class);
-		gameOver = true;
+		setGameOver(true);
 	}
 	
 	public void setGameOver(boolean gameOver) {
 		this.gameOver = gameOver;
 		if(gameOver) {
-			
+			world.getPlayer().setVisible(true);
 		}
 	}
 
