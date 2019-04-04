@@ -38,6 +38,7 @@ public class Game extends GameEngine {
 	private int currentLevel;
 	private int maxLevelSize;
 	private Player player;
+	private static int levels;
 	
 	
 	public static void main(String[] args) {
@@ -51,6 +52,7 @@ public class Game extends GameEngine {
 		ObjectMapper objectMapper = new ObjectMapper();
 		try {
 			rooms.addAll(objectMapper.readValue(new File("resources/levels"), new TypeReference<List<Room>>() {	}));
+			levels = rooms.size();
 		} catch (JsonParseException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
@@ -174,6 +176,10 @@ public class Game extends GameEngine {
 	
 	public void resetTileMap() {
 		tileMap = new TileMap(0);
+	}
+	
+	public int getLevelAmount() {
+		return this.levels;
 	}
 	
 	

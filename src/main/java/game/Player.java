@@ -102,6 +102,7 @@ public class Player extends SpriteObject implements ICollidableWithTiles {
 	
 	public void checkViewPort() {
 		if(world.getView().getViewport().getX() > this.getX() + (this.getWidth() / 2)  || world.getView().getViewport().getY() > this.getY() + (this.getHeight() / 2) || world.getView().getViewport().getY() + world.getView().getViewport().getZoomHeight() < this.getY() + (this.getHeight() / 2)) {
+			playerSprite = playerVisible;
 			world.gameOver();
 		}
 	}
@@ -156,10 +157,12 @@ public class Player extends SpriteObject implements ICollidableWithTiles {
 			if (ct.getTile() instanceof SpikeTile) {
 				if (getX() + getWidth() > vector.x && getX() < vector.x + ct.getTile().getSprite().getWidth() && getY() < vector.y + ct.getTile().getSprite().getHeight()
 						&& getY() + getHeight() > vector.y) {
+					playerSprite = playerVisible;
 					world.gameOver();
 				}
 			}
 			if (ct.getTile() instanceof WinTile) {
+				playerSprite = playerVisible;
 				world.getPauseMenu().nextLevelPause();
 			}
 		}

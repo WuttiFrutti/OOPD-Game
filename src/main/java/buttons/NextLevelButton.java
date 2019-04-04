@@ -15,9 +15,8 @@ public class NextLevelButton extends Button{
 		pauseMenu.setDrawPauseMenu(false);
 		pauseMenu.setGameOver(false);
 		game.resumeGame();
+
 		game.startGame(game.getCurrentLevel() + 1);
-		
 	}
-	
 	
 }
