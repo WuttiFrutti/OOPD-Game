@@ -12,11 +12,11 @@ public class NextLevelButton extends Button{
 
 	@Override
 	public void clickedButton(Game game) {
-		pauseMenu.setDrawPauseMenu(false);
 		pauseMenu.setGameOver(false);
-		game.resumeGame();
+		
 
 		game.startGame(game.getCurrentLevel() + 1);
+		game.resumeGame();
 	}
 	
 }

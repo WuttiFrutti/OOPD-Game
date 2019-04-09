@@ -20,7 +20,7 @@ public class PauseMenu extends GameObject {
 	}
 	
 	public void setDrawPauseMenu(boolean draw) {
-		if(!draw && !gameOver) {
+		if(!draw) {
 			world.deleteAllGameObjectsOfType(ContinueButton.class);
 			world.deleteAllGameObjectsOfType(RestartButton.class);
 			world.deleteAllGameObjectsOfType(ExitButton.class);
@@ -52,8 +52,7 @@ public class PauseMenu extends GameObject {
 	public void gameOverPause() {
 		setGameOver(true);
 		setDrawPauseMenu(true);
-		world.deleteAllGameObjectsOfType(ContinueButton.class);
-		
+		world.deleteAllGameObjectsOfType(ContinueButton.class);	
 	}
 	
 	public void setGameOver(boolean gameOver) {
